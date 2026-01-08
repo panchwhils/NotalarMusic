@@ -24,6 +24,7 @@ class MongoDB:
         self.admin_play = []
         self.blacklisted = []
         self.cmd_delete = []
+        self.loop = {}
         self.notified = []
         self.cache = self.db.cache
         self.logger = False
@@ -39,6 +40,9 @@ class MongoDB:
 
         self.lang = {}
         self.langdb = self.db.lang
+
+        self.playlist = {}
+        self.playlistdb = self.db.playlist
 
         self.users = []
         self.usersdb = self.db.users
@@ -83,6 +87,12 @@ class MongoDB:
         if chat_id not in self.admin_list or reload:
             self.admin_list[chat_id] = await reload_admins(chat_id)
         return self.admin_list[chat_id]
+
+    async def get_loop(self, chat_id: int) -> int:
+        return self.loop.get(chat_id, 0)
+
+    async def set_loop(self, chat_id: int, loop: int) -> None:
+        self.loop[chat_id] = loop
 
     # AUTH METHODS
     async def _get_auth(self, chat_id: int) -> set[int]:
@@ -258,6 +268,23 @@ class MongoDB:
             {"_id": chat_id},
             {"$set": {"admin_play": not remove}},
             upsert=True,
+        )
+
+    # PLAYLIST METHODS
+    async def get_playlist(self, user_id: int) -> list | None:
+        doc = await self.playlistdb.find_one({"_id": user_id}) or {}
+        return doc.get("tracks")
+
+    async def add_track(self, user_id: int, video_id: str) -> None:
+        await self.playlistdb.update_one(
+            {"_id": user_id},
+            {"$addToSet": {"tracks": video_id}},
+        )
+
+    async def rm_track(self, user_id: int, video_id: str) -> None:
+        await self.playlistdb.update_one(
+            {"_id": user_id},
+            {"$pull": {"tracks": video_id}},
         )
 
     # SUDO METHODS

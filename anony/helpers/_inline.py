@@ -95,6 +95,16 @@ class Inline:
             ]
         )
 
+    def playlist_mode(self, user_id: int, audio: str, video: str) -> types.InlineKeyboardMarkup:
+        return self.ikm(
+            [
+                [
+                    self.ikb(text=audio, callback_data=f"playlist {user_id} audio"),
+                    self.ikb(text=video, callback_data=f"playlist {user_id} video"),
+                ]
+            ]
+        )
+
     def queue_markup(
         self, chat_id: int, _text: str, playing: bool
     ) -> types.InlineKeyboardMarkup:

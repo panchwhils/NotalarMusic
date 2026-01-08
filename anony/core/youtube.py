@@ -58,7 +58,7 @@ class YouTube:
     def valid(self, url: str) -> bool:
         return bool(re.match(self.regex, url))
 
-    async def search(self, query: str, m_id: int, video: bool = False) -> Track | None:
+    async def search(self, query: str, m_id: int, video: bool = False, mention: str = None) -> Track | None:
         _search = VideosSearch(query, limit=1, with_live=False)
         results = await _search.next()
         if results and results["result"]:
@@ -74,6 +74,7 @@ class YouTube:
                 url=data.get("link"),
                 view_count=data.get("viewCount", {}).get("short"),
                 video=video,
+                user=mention,
             )
         return None
 

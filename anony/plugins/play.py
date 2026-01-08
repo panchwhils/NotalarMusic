@@ -128,3 +128,68 @@ async def play_hndlr(
         chat_id=m.chat.id,
         text=m.lang["playlist_queued"].format(len(tracks)) + added,
     )
+
+
+@app.on_message(filters.command(["playlist"]) & filters.group & ~app.bl_users)
+@lang.language()
+async def _playlist(_, m: types.Message):
+    await m.reply_text(
+        text=m.lang["playlist_mode"],
+        reply_markup=buttons.playlist_mode(
+            m.from_user.id,
+            m.lang["audio"],
+            m.lang["video"],
+        ),
+    )
+
+
+@app.on_callback_query(filters.regex("add_playlist"))
+@lang.language()
+async def _add_playlist(_, cq: types.CallbackQuery):
+    q, vid_id = cq.data.split()
+    plist = await db.get_playlist(cq.from_user.id)
+
+    if plist and vid_id in plist:
+        return await cq.answer(cq.lang["playlist_del"], show_alert=True)
+
+    await db.add_track(cq.from_user.id, vid_id)
+    await cq.answer(cq.lang["playlist_add"], show_alert=True)
+
+
+@app.on_callback_query(filters.regex("playlist"))
+@lang.language()
+async def _playlist_cb(_, query: types.CallbackQuery):
+    ok, user_id, mode = query.data.split()
+    user_id = int(user_id)
+    mention = query.from_user.mention
+    chat_id = query.message.chat.id
+    video = mode == "video"
+
+    if query.from_user.id != user_id:
+        return await query.answer(query.lang["playlist_not_you"], show_alert=True)
+
+    plist = await db.get_playlist(user_id)
+    if not plist:
+        return await query.answer(query.lang["playlist_empty"], show_alert=True)
+
+    await query.answer(query.lang["playlist_fetch"], show_alert=True)
+    await query.edit_message_text(query.lang["playlist_fetch"])
+    tracks = [await yt.search(vid, 0, video=video, mention=mention) for vid in plist]
+    if await db.get_call(chat_id):
+        added = await playlist_to_queue(chat_id, tracks)
+        await app.send_message(
+            chat_id=chat_id,
+            text=query.lang["playlist_queued"].format(len(tracks)) + added,
+        )
+    else:
+        media = tracks[0]
+        tracks.remove(media)
+        media.message_id = query.message.id
+        media.file_path = await yt.download(media.id, video=video)
+        await anon.play_media(chat_id=chat_id, message=query.message, media=media)
+        if tracks:
+            added = playlist_to_queue(chat_id, tracks)
+            await app.send_message(
+                chat_id=chat_id,
+                text=query.lang["playlist_queued"].format(len(tracks)) + added,
+            )
