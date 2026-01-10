@@ -4,6 +4,7 @@
 
 
 from pathlib import Path
+from random import shuffle
 
 from pyrogram import filters, types
 
@@ -135,11 +136,7 @@ async def play_hndlr(
 async def _playlist(_, m: types.Message):
     await m.reply_text(
         text=m.lang["playlist_mode"],
-        reply_markup=buttons.playlist_mode(
-            m.from_user.id,
-            m.lang["audio"],
-            m.lang["video"],
-        ),
+        reply_markup=buttons.playlist_mode(m.from_user.id),
     )
 
 
@@ -166,7 +163,7 @@ async def _playlist_cb(_, query: types.CallbackQuery):
     user_id = int(user_id)
     mention = query.from_user.mention
     chat_id = query.message.chat.id
-    video = mode == "video"
+    order = mode == "order"
 
     if query.from_user.id != user_id:
         return await query.answer(query.lang["playlist_not_you"], show_alert=True)
@@ -177,7 +174,9 @@ async def _playlist_cb(_, query: types.CallbackQuery):
 
     await query.answer(query.lang["playlist_fetch"], show_alert=True)
     await query.edit_message_text(query.lang["playlist_fetch"])
-    tracks = [await yt.search(vid, 0, video=video, mention=mention) for vid in plist]
+    tracks = [await yt.search(vid, 0, mention=mention) for vid in plist]
+    if not order:
+        shuffle(tracks)
     if await db.get_call(chat_id):
         added = playlist_to_queue(chat_id, tracks)
         await query.edit_message_text(query.lang["playlist_queued"].format(len(tracks)) + added)
@@ -185,7 +184,7 @@ async def _playlist_cb(_, query: types.CallbackQuery):
         media = tracks[0]
         tracks.remove(media)
         media.message_id = query.message.id
-        media.file_path = await yt.download(media.id, video=video)
+        media.file_path = await yt.download(media.id, video=False)
         await anon.play_media(chat_id=chat_id, message=query.message, media=media)
         if tracks:
             added = playlist_to_queue(chat_id, tracks)
