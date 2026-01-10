@@ -8,7 +8,7 @@ from pathlib import Path
 from pyrogram import filters, types
 
 from anony import anon, app, config, db, lang, queue, tg, yt
-from anony.helpers import buttons, utils
+from anony.helpers import buttons, utils, admin_check
 from anony.helpers._play import checkUB
 
 
@@ -145,14 +145,17 @@ async def _playlist(_, m: types.Message):
 
 @app.on_callback_query(filters.regex("add_playlist"))
 @lang.language()
+@admin_check
 async def _add_playlist(_, cq: types.CallbackQuery):
     q, vid_id = cq.data.split()
-    plist = await db.get_playlist(cq.from_user.id)
+    chat_id = cq.message.chat.id
+    plist = await db.get_playlist(chat_id)
 
     if plist and vid_id in plist:
+        await db.rm_track(chat_id, vid_id)
         return await cq.answer(cq.lang["playlist_del"], show_alert=True)
 
-    await db.add_track(cq.from_user.id, vid_id)
+    await db.add_track(chat_id, vid_id)
     await cq.answer(cq.lang["playlist_add"], show_alert=True)
 
 
@@ -168,7 +171,7 @@ async def _playlist_cb(_, query: types.CallbackQuery):
     if query.from_user.id != user_id:
         return await query.answer(query.lang["playlist_not_you"], show_alert=True)
 
-    plist = await db.get_playlist(user_id)
+    plist = await db.get_playlist(chat_id)
     if not plist:
         return await query.answer(query.lang["playlist_empty"], show_alert=True)
 
@@ -176,11 +179,8 @@ async def _playlist_cb(_, query: types.CallbackQuery):
     await query.edit_message_text(query.lang["playlist_fetch"])
     tracks = [await yt.search(vid, 0, video=video, mention=mention) for vid in plist]
     if await db.get_call(chat_id):
-        added = await playlist_to_queue(chat_id, tracks)
-        await app.send_message(
-            chat_id=chat_id,
-            text=query.lang["playlist_queued"].format(len(tracks)) + added,
-        )
+        added = playlist_to_queue(chat_id, tracks)
+        await query.edit_message_text(query.lang["playlist_queued"].format(len(tracks)) + added)
     else:
         media = tracks[0]
         tracks.remove(media)

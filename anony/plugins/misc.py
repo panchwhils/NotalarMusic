@@ -9,7 +9,7 @@ import time
 from pyrogram import enums, errors, filters, types
 
 from anony import anon, app, config, db, lang, queue, tasks, userbot, yt
-from anony.helpers import buttons
+from anony.helpers import buttons, Track
 
 
 @app.on_message(filters.video_chat_started, group=19)
@@ -86,7 +86,7 @@ async def update_timer(length=10):
                     chat_id=chat_id,
                     message_id=message_id,
                     reply_markup=buttons.controls(
-                        chat_id=chat_id, timer=timer, remove=remove
+                        chat_id=chat_id, timer=timer, remove=remove, vid_id=media.id if isinstance(media, Track) else None,
                     ),
                 )
             except Exception:

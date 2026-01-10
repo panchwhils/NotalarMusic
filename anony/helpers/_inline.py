@@ -23,6 +23,7 @@ class Inline:
         status: str = None,
         timer: str = None,
         remove: bool = False,
+        vid_id: str = None,
     ) -> types.InlineKeyboardMarkup:
         keyboard = []
         if status:
@@ -44,6 +45,8 @@ class Inline:
                     self.ikb(text="▢", callback_data=f"controls stop {chat_id}"),
                 ]
             )
+        if vid_id:
+            keyboard.append([self.ikb(text="Playlist", callback_data=f"add_playlist {vid_id}")])
         return self.ikm(keyboard)
 
     def help_markup(

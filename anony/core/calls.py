@@ -89,7 +89,10 @@ class TgCall(PyTgCalls):
                     media.duration,
                     media.user,
                 )
-                keyboard = buttons.controls(chat_id)
+                keyboard = buttons.controls(
+                    chat_id,
+                    vid_id=media.id if isinstance(media, Track) else None,
+                )
                 try:
                     await message.edit_media(
                         media=InputMediaPhoto(
@@ -129,6 +132,7 @@ class TgCall(PyTgCalls):
         media = queue.get_current(chat_id)
         _lang = await lang.get_lang(chat_id)
         msg = await app.send_message(chat_id=chat_id, text=_lang["play_again"])
+        media.message_id = msg.id
         await self.play_media(chat_id, msg, media)
 
 

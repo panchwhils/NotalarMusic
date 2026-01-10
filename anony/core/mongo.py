@@ -41,7 +41,6 @@ class MongoDB:
         self.lang = {}
         self.langdb = self.db.lang
 
-        self.playlist = {}
         self.playlistdb = self.db.playlist
 
         self.users = []
@@ -271,19 +270,20 @@ class MongoDB:
         )
 
     # PLAYLIST METHODS
-    async def get_playlist(self, user_id: int) -> list | None:
-        doc = await self.playlistdb.find_one({"_id": user_id}) or {}
+    async def get_playlist(self, chat_id: int) -> list | None:
+        doc = await self.playlistdb.find_one({"_id": chat_id}) or {}
         return doc.get("tracks")
 
-    async def add_track(self, user_id: int, video_id: str) -> None:
+    async def add_track(self, chat_id: int, video_id: str) -> None:
         await self.playlistdb.update_one(
-            {"_id": user_id},
+            {"_id": chat_id},
             {"$addToSet": {"tracks": video_id}},
+            upsert=True,
         )
 
-    async def rm_track(self, user_id: int, video_id: str) -> None:
+    async def rm_track(self, chat_id: int, video_id: str) -> None:
         await self.playlistdb.update_one(
-            {"_id": user_id},
+            {"_id": chat_id},
             {"$pull": {"tracks": video_id}},
         )
 
