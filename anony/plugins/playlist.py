@@ -14,13 +14,16 @@ async def _playlist_func(_, m: types.Message):
         return await m.reply_text("Bir şarkı adı ver.")
     query = m.text.split(None, 1)[1]
     srch = await yt.search(query, 0)
-    plist = await db.get_playlist(m.from_user.id)
+    plist = await db.get_playlist(m.from_user.id, ids=True)
+
     if m.command[0] == "add":
-        if srch.id in plist:
+        if plist and srch.id in plist:
             return await m.reply_text("Şarkı zaten çalma listesinde.")
-        await db.add_track(m.from_user.id, srch.id)
+        await db.add_track(m.from_user.id, srch.id, srch.title)
         await m.reply_text(f"Çalma listesine eklendi: {srch.title}")
     else:
+        if not plist:
+            return await m.reply_text("Şarkı çalma listesinde değil.")
         if srch.id not in plist:
             return await m.reply_text("Şarkı çalma listesinde değil.")
         await db.rm_track(m.from_user.id, srch.id)

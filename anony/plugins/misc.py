@@ -85,9 +85,7 @@ async def update_timer(length=10):
                 await app.edit_message_reply_markup(
                     chat_id=chat_id,
                     message_id=message_id,
-                    reply_markup=buttons.controls(
-                        chat_id=chat_id, timer=timer, remove=remove, vid_id=media.id if isinstance(media, Track) else None,
-                    ),
+                    reply_markup=buttons.controls(chat_id=chat_id, timer=timer, remove=remove),
                 )
             except Exception:
                 pass

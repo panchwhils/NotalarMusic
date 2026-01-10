@@ -19,6 +19,19 @@ async def _help(_, m: types.Message):
     )
 
 
+async def _playlist(_, m: types.Message):
+    plist = await db.get_playlist(m.from_user.id)
+    if not plist:
+        return await m.reply_text(m.lang["playlist_empty"])
+
+    txt = "<u><b>İşte çalma listen:</b></u>\n\n"
+    for i, vid in enumerate(plist):
+        txt += f"\n{i+1}. <a href=https://www.youtube.com/watch?v={vid['id']}>{vid['title']}</a>"
+
+    txt += "\n\n<i>Şarkı eklemek için /add komutunu kullan.\nŞarkı silmek için /del komutunu kullan.</i>"
+    await m.reply_text(txt)
+
+
 @app.on_message(filters.command(["start"]))
 @lang.language()
 async def start(_, message: types.Message):
@@ -27,6 +40,8 @@ async def start(_, message: types.Message):
 
     if len(message.command) > 1 and message.command[1] == "help":
         return await _help(_, message)
+    if len(message.command) > 1 and message.command[1] == "playlist":
+        return await _playlist(_, message)
 
     private = message.chat.type == enums.ChatType.PRIVATE
     _text = (

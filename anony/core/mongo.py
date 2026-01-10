@@ -270,21 +270,24 @@ class MongoDB:
         )
 
     # PLAYLIST METHODS
-    async def get_playlist(self, chat_id: int) -> list | None:
+    async def get_playlist(self, chat_id: int, ids: bool = False) -> list | None:
         doc = await self.playlistdb.find_one({"_id": chat_id}) or {}
-        return doc.get("tracks")
+        tracks = doc.get("tracks")
+        if ids and tracks:
+            return [track["id"] for track in tracks]
+        return tracks
 
-    async def add_track(self, chat_id: int, video_id: str) -> None:
+    async def add_track(self, chat_id: int, video_id: str, title: str) -> None:
         await self.playlistdb.update_one(
             {"_id": chat_id},
-            {"$addToSet": {"tracks": video_id}},
+            {"$addToSet": {"tracks": {"id": video_id, "title": title}}},
             upsert=True,
         )
 
     async def rm_track(self, chat_id: int, video_id: str) -> None:
         await self.playlistdb.update_one(
             {"_id": chat_id},
-            {"$pull": {"tracks": video_id}},
+            {"$pull": {"tracks": {"id": video_id}}},
         )
 
     # SUDO METHODS

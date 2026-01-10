@@ -89,10 +89,7 @@ class TgCall(PyTgCalls):
                     media.duration,
                     media.user,
                 )
-                keyboard = buttons.controls(
-                    chat_id,
-                    vid_id=media.id if isinstance(media, Track) else None,
-                )
+                keyboard = buttons.controls(chat_id)
                 try:
                     await message.edit_media(
                         media=InputMediaPhoto(

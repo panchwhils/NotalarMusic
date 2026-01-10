@@ -140,22 +140,6 @@ async def _playlist(_, m: types.Message):
     )
 
 
-@app.on_callback_query(filters.regex("add_playlist"))
-@lang.language()
-@admin_check
-async def _add_playlist(_, cq: types.CallbackQuery):
-    q, vid_id = cq.data.split()
-    chat_id = cq.message.chat.id
-    plist = await db.get_playlist(chat_id)
-
-    if plist and vid_id in plist:
-        await db.rm_track(chat_id, vid_id)
-        return await cq.answer(cq.lang["playlist_del"], show_alert=True)
-
-    await db.add_track(chat_id, vid_id)
-    await cq.answer(cq.lang["playlist_add"], show_alert=True)
-
-
 @app.on_callback_query(filters.regex("playlist"))
 @lang.language()
 async def _playlist_cb(_, query: types.CallbackQuery):
@@ -168,7 +152,7 @@ async def _playlist_cb(_, query: types.CallbackQuery):
     if query.from_user.id != user_id:
         return await query.answer(query.lang["playlist_not_you"], show_alert=True)
 
-    plist = await db.get_playlist(chat_id)
+    plist = await db.get_playlist(user_id, ids=True)
     if not plist:
         return await query.answer(query.lang["playlist_empty"], show_alert=True)
 
