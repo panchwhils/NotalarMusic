@@ -1,0 +1,27 @@
+# Copyright (c) 2025 AnonymousX1025
+# Licensed under the MIT License.
+# This file is part of AnonXMusic
+
+
+from pyrogram import filters, types
+
+from anony import app, db, yt
+
+
+@app.on_message(filters.command(["add", "del"]) & filters.group & ~app.bl_users)
+async def _playlist_func(_, m: types.Message):
+    if len(m.command) < 2:
+        return await m.reply_text("Bir şarkı adı ver.")
+    query = m.text.split(None, 1)[1]
+    srch = await yt.search(query, 0)
+    plist = await db.get_playlist(m.from_user.id)
+    if m.command[0] == "add":
+        if srch.id in plist:
+            return await m.reply_text("Şarkı zaten çalma listesinde.")
+        await db.add_track(m.from_user.id, srch.id)
+        await m.reply_text(f"Çalma listesine eklendi: {srch.title}")
+    else:
+        if srch.id not in plist:
+            return await m.reply_text("Şarkı çalma listesinde değil.")
+        await db.rm_track(m.from_user.id, srch.id)
+        await m.reply_text(f"Çalma listesinden kaldırıldı: {srch.title}")
