@@ -8,7 +8,7 @@ from pyrogram import filters, types
 from anony import app, db, yt
 
 
-@app.on_message(filters.command(["add", "del"]) & filters.group & ~app.bl_users)
+@app.on_message(filters.command(["add", "del"]) & ~app.bl_users)
 async def _playlist_func(_, m: types.Message):
     if len(m.command) < 2:
         return await m.reply_text("Bir şarkı adı ver.")
