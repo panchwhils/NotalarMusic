@@ -9,7 +9,7 @@ from anony import anon, app, db, lang, queue
 from anony.helpers import can_manage_vc
 
 
-@app.on_message(filters.command(["seek", "seekback"]) & filters.group & ~app.bl_users)
+@app.on_message(filters.command(["ilerisar", "gerisar"]) & filters.group & ~app.bl_users)
 @lang.language()
 @can_manage_vc
 async def _seek(_, m: types.Message):

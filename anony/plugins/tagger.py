@@ -15,7 +15,7 @@ running = []
 emojis = ["🤞", "💕", "😘", "🙌", "😎", "👌", "😊", "❤️", "😍"]
 
 
-@app.on_message(filters.command(["vctag"]) & filters.group & ~app.bl_users)
+@app.on_message(filters.command(["davet"]) & filters.group & ~app.bl_users)
 @lang.language()
 @admin_check
 async def _vctag(_, m: types.Message):

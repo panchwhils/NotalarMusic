@@ -28,7 +28,7 @@ async def _playlist(_, m: types.Message):
     for i, vid in enumerate(plist):
         txt += f"\n{i+1}. <a href=https://www.youtube.com/watch?v={vid['id']}>{vid['title']}</a>"
 
-    txt += "\n\n<i>Şarkı eklemek için /add komutunu kullan.\nŞarkı silmek için /del komutunu kullan.</i>"
+    txt += "\n\n<i>Şarkı eklemek için /ekle komutunu kullan.\nŞarkı silmek için /cikar komutunu kullan.</i>"
     await m.reply_text(txt)
 
 
