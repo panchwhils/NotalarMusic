@@ -34,7 +34,9 @@ def checkUB(play):
         )
         video = m.command[0][0] == "v" and config.VIDEO_PLAY
         url = utils.get_url(m)
-        m3u8 = url and not yt.valid(url)
+        spotify = url and utils.is_spotify(url)
+        soundcloud = url and utils.is_soundcloud(url)
+        m3u8 = url and not any([yt.valid(url), spotify, soundcloud])
 
         play_mode = await db.get_play_mode(chat_id)
         if play_mode or force:
@@ -119,6 +121,6 @@ def checkUB(play):
             except:
                 pass
 
-        return await play(_, m, force, m3u8, video, url)
+        return await play(_, m, force, m3u8, spotify, soundcloud, video, url)
 
     return wrapper

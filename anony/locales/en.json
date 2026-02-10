@@ -79,7 +79,7 @@
   "play_now": "Şimdi Oynat",
   "play_next": "Bekleyin...\n\nKuyruktan bir sonraki medya indiriliyor.",
   "play_invite": "Bir saniye...\n\n{0} asistanı sohbete davet ediliyor.",
-  "play_searching": "Aranıyor...",
+  "play_searching": "🎶",
   "play_downloading": "İndiriliyor...",
   "play_paused": "<b>Yayın duraklatıldı:</b> {0}",
   "play_resumed": "<b>Yayın devam ettirildi:</b> {0}",

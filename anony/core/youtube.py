@@ -11,7 +11,9 @@ import aiohttp
 from pathlib import Path
 
 from py_yt import Playlist, VideosSearch
-from anony import logger
+
+from ._api import FallenApi
+from anony import config, logger
 from anony.helpers import Track, utils
 
 
@@ -21,8 +23,8 @@ class YouTube:
         self.cookies: list[str] = []
         self.checked = False
         self.cookie_dir = "anony/cookies"
+        self.fallen = FallenApi()
         self.warned = False
-
         self.regex = re.compile(
             r"(https?://)?(www\.|m\.|music\.)?"
             r"(youtube\.com/(watch\?v=|shorts/|playlist\?list=)|youtu\.be/)"
@@ -143,16 +145,24 @@ class YouTube:
 
     # ───────────────── download ─────────────────
 
-    async def download(self, video_id: str, video: bool = False) -> str | None:
-        url = self.base + video_id
+    async def download(self, video_id: str, video: bool = False, song: bool = False) -> str | None:
+        url = video_id
+        if "soundcloud" not in url:
+            url = self.base + video_id
+
+        if not video and not song and config.API_KEY and config.API_URL:
+            if file_path := await self.fallen.download_track(url):
+                return file_path
+
         ext = "mp4" if video else "webm"
+        if song:
+            ext = "mp3"
         filename = f"downloads/{video_id}.{ext}"
 
         if Path(filename).exists():
             return filename
 
         cookie = self.get_cookies()
-
         base_opts = {
             "outtmpl": "downloads/%(id)s.%(ext)s",
             "quiet": True,
@@ -175,6 +185,15 @@ class YouTube:
                 **base_opts,
                 "format": "bestaudio[ext=webm][acodec=opus]",
             }
+
+        if song:
+            ydl_opts["postprocessors"] = [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "192",
+                }
+            ]
 
         def _download():
             try:

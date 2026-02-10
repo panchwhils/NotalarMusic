@@ -41,28 +41,31 @@ class Utilities:
     def get_url(self, message_1: types.Message) -> str | None:
         link = None
         messages = [message_1]
-        entities = [enums.MessageEntityType.URL, enums.MessageEntityType.TEXT_LINK]
 
         if message_1.reply_to_message:
             messages.append(message_1.reply_to_message)
 
         for message in messages:
-            if message.entities:
-                for entity in message.entities:
-                    if entity.type in entities:
-                        link = entity.url
-                        break
+            entities = message.entities or message.caption_entities or []
 
-            if message.caption_entities:
-                for entity in message.caption_entities:
-                    if entity.type in entities:
-                        link = entity.url
-                        break
+            for entity in entities:
+                if entity.type == enums.MessageEntityType.TEXT_LINK:
+                    link = entity.url
+                    break
+                elif entity.type == enums.MessageEntityType.URL:
+                    link = message.text[entity.offset: entity.offset + entity.length]
+                    break
 
         if link:
             return link.split("&si")[0].split("?si")[0]
         return None
 
+
+    def is_soundcloud(self, url: str) -> bool:
+        return bool(re.match(r"^https?://(?:www\.|m\.)?soundcloud\.com/[^/]+/[^/]+/?(?:\?.*)?$", url))
+
+    def is_spotify(self, url: str) -> bool:
+        return bool(re.match(r"^https?://open\.spotify\.com/track/[A-Za-z0-9]{22}(?:\?.*)?$", url))
 
     async def extract_user(self, msg: types.Message) -> types.User | None:
         if msg.reply_to_message:

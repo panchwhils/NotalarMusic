@@ -33,5 +33,5 @@ class Track:
     time: int = 0
     thumbnail: str = None
     user: str = None
-    view_count: str = None
+    view_count: str = ""
     video: bool = False

@@ -2,14 +2,14 @@
 # Licensed under the MIT License.
 # This file is part of AnonXMusic
 
-
+import time
 from pathlib import Path
 from random import shuffle
 
 from pyrogram import filters, types
 
 from anony import anon, app, config, db, lang, queue, tg, yt
-from anony.helpers import buttons, utils, admin_check
+from anony.helpers import buttons, utils
 from anony.helpers._play import checkUB
 
 
@@ -33,6 +33,8 @@ async def play_hndlr(
     m: types.Message,
     force: bool = False,
     m3u8: bool = False,
+    spotify: bool = False,
+    soundcloud: bool = False,
     video: bool = False,
     url: str = None,
 ) -> None:
@@ -42,7 +44,23 @@ async def play_hndlr(
     media = tg.get_media(m.reply_to_message) if m.reply_to_message else None
     tracks = []
 
-    if url:
+    if spotify or soundcloud:
+        result = await yt.fallen.get_title(url)
+        if not result:
+            return await sent.edit_text(m.lang["play_not_found"].format(config.SUPPORT_CHAT))
+        file = await yt.search(result.get("title"), sent.id, video=video)
+        if not file:
+            return await sent.edit_text(m.lang["play_not_found"].format(config.SUPPORT_CHAT))
+        file.title = result.get("title").title()
+        file.url = result.get("url")
+        if soundcloud:
+            url = file.url
+        file.thumbnail = result.get("thumbnail")
+        file.duration_sec = result.get("duration")
+        file.duration = time.strftime("%M:%S", time.gmtime(file.duration_sec))
+        file.view_count = result.get("views")
+
+    elif url:
         if "playlist" in url:
             await sent.edit_text(m.lang["playlist_fetch"])
             tracks = await yt.playlist(
@@ -119,7 +137,10 @@ async def play_hndlr(
             file.file_path = fname
         else:
             await sent.edit_text(m.lang["play_downloading"])
-            file.file_path = await yt.download(file.id, video=video)
+            if soundcloud:
+                file.file_path = await yt.download(url, video=False)
+            else:
+                file.file_path = await yt.download(file.id, video=video)
 
     await anon.play_media(chat_id=m.chat.id, message=sent, media=file)
     if not tracks:
@@ -166,6 +187,7 @@ async def _playlist_cb(_, query: types.CallbackQuery):
         await query.edit_message_text(query.lang["playlist_queued"].format(len(tracks)) + added)
     else:
         media = tracks[0]
+        queue.add(chat_id, media)
         tracks.remove(media)
         media.message_id = query.message.id
         media.file_path = await yt.download(media.id, video=False)

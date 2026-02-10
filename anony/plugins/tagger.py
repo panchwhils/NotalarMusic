@@ -84,26 +84,36 @@ async def _tagall(_, m: types.Message):
     ]
 
     emoji = m.command[0][0] == "e"
-    text = ""
+    count, text, etext = 0, "", ""
     if len(m.command) > 1 and not emoji:
-        text = m.text.split(None, 1)[1].strip()
+        etext = m.text.split(None, 1)[1].strip()
     reply = m.reply_to_message.id if m.reply_to_message else None
 
     for member in members:
         if m.chat.id not in running:
             break
 
+        count += 1
         if member.user.username and not emoji:
             user = ("@" + member.user.username)
         else:
             user = member.user.mention
             if emoji:
                 user = user(random.choice(emojis))
+        text += user + " "
 
+        if count == 5:
+            await app.send_message(
+                chat_id=m.chat.id,
+                text=f"{etext}\n{text}".strip(),
+                reply_to_message_id=reply,
+            )
+            await asyncio.sleep(3)
+            count, text = 0, ""
+    if count > 0:
         await app.send_message(
             chat_id=m.chat.id,
-            text=f"{text}\n{user}".strip(),
+            text=f"{etext}\n{text}".strip(),
             reply_to_message_id=reply,
         )
-        await asyncio.sleep(3)
     if m.chat.id in running: running.remove(m.chat.id)
