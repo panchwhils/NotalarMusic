@@ -49,8 +49,9 @@
   "help_queue": "<u><b>Kuyruk komutları:</b></u>\n\n/queue: Kuyruktaki parçaları gösterir.",
   "help_stats": "<u><b>İstatistik komutları:</b></u>\n\n/stats: Bot istatistiklerini gösterir.",
   "help_sudo": "<b><u>Sudo komutları:</u></b>\n\n/ac: Aktif çağrı sayısını gösterir.\n\n/activevc: Aktif çağrıların listesini gösterir.\n\n/broadcast [mesaja yanıt]: Mesajı tüm sohbetlere yayınlar.\n-nochat: Yayından grupları hariç tutar.\n-user: Yayına kullanıcıları dahil eder.\n-copy: Yönlendirme etiketini kaldırır.\n<b>Örnek:</b> <code>/broadcast -user -copy</code>\n\n/eval: Verilen kodu çalıştırır.\n\n/logs: Log dosyasını gönderir.\n\n/logger [on|off]: Logger’ı açar/kapatır.\n\n/restart: Botu yeniden başlatır.\n\n/addsudo: Bir kullanıcıyı sudo listesine ekler.\n/rmsudo: Bir kullanıcıyı sudo listesinden çıkarır.",
-  "help_tagger": "<b><u>Etiket komutları:</u></b>\n\n/atag: Yöneticileri etiketler.\n/etag: Rastgele emoji ile herkesi etiketler.\n/utag: Herkesi etiketler.\n/vctag: Herkesi görüntülü sohbete davet eder.\n\n/bitir: Etiketlemeyi durdurur.",
+  "help_tagger": "<b><u>Etiket komutları:</u></b>\n\n/atag: Yöneticileri etiketler.\n/etag: Rastgele emoji ile herkesi etiketler.\n/gtag: Kullanıcıları rastgele selamlamalarla etiketle.\n/utag: Herkesi etiketler.\n/vctag: Herkesi görüntülü sohbete davet eder.\n\n/bitir: Etiketlemeyi durdurur.",
   "help_fun": "<b><u>Eğlence komutları:</u></b>\n\n/eros: Sohbetten bir çifti seçer.\n\n/slap: Bir kullanıcıya tokat atar.",
+  "help_song": "<b><u>Şarkı komutları:</u></b>\n\n/song: İstenen şarkıyı getir.",
   "lang_choose": "Bu sohbet için ayarlamak istediğin dili seç:",
   "lang_change": "Mevcut sohbetin dili şu dile değiştiriliyor: {0}",
   "lang_changed": "Mevcut sohbetin dili <i>{0}</i> olarak değiştirildi",
@@ -163,5 +164,6 @@
   "help_7": "İstatistikler",
   "help_8": "Sudo",
   "help_9": "Etiketleyici",
-  "help_10": "Eğlence"
+  "help_10": "Eğlence",
+  "help_11": "Şarkı"
 }
