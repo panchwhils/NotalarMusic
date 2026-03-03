@@ -49,6 +49,7 @@ class TgCall(PyTgCalls):
         message: Message,
         media: Media | Track,
         seek_time: int = 0,
+        tv: bool = False,
     ) -> None:
         client = await db.get_assistant(chat_id)
         _lang = await lang.get_lang(chat_id)
@@ -90,21 +91,24 @@ class TgCall(PyTgCalls):
                     media.user,
                 )
                 keyboard = buttons.controls(chat_id)
-                try:
-                    await message.edit_media(
-                        media=InputMediaPhoto(
-                            media=_thumb,
+                if not tv:
+                    try:
+                        await message.edit_media(
+                            media=InputMediaPhoto(
+                                media=_thumb,
+                                caption=text,
+                            ),
+                            reply_markup=keyboard,
+                        )
+                    except MessageIdInvalid:
+                        media.message_id = (await app.send_photo(
+                            chat_id=chat_id,
+                            photo=_thumb,
                             caption=text,
-                        ),
-                        reply_markup=keyboard,
-                    )
-                except MessageIdInvalid:
-                    media.message_id = (await app.send_photo(
-                        chat_id=chat_id,
-                        photo=_thumb,
-                        caption=text,
-                        reply_markup=keyboard,
-                    )).id
+                            reply_markup=keyboard,
+                        )).id
+                else:
+                    await message.edit_text("Started streaming channel: {}")
         except FileNotFoundError:
             await message.edit_text(_lang["error_no_file"].format(config.SUPPORT_CHAT))
             await self.play_next(chat_id)

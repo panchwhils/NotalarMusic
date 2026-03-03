@@ -121,3 +121,19 @@ class Telegram:
             )
         else:
             await query.answer(query.lang["dl_not_found"], show_alert=True)
+
+    async def process_m3u8(
+        self,
+        url: str,
+        msg_id: int,
+        video: bool,
+        title: str = "M3U8 Stream",
+    ) -> Media:
+        return Media(
+            id=str(msg_id),
+            file_path=url,
+            message_id=msg_id,
+            url=url,
+            title=title,
+            video=video,
+        )

@@ -3,6 +3,7 @@ logs/
 .cache
 *.txt
 .idea
+.venv
 .DS_Store
 venv/
 cache/

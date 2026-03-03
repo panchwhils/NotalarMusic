@@ -44,7 +44,11 @@ async def play_hndlr(
     media = tg.get_media(m.reply_to_message) if m.reply_to_message else None
     tracks = []
 
-    if spotify or soundcloud:
+    if media:
+        setattr(sent, "lang", m.lang)
+        file = await tg.download(m.reply_to_message, sent)
+
+    elif spotify or soundcloud:
         result = await yt.fallen.get_title(url)
         if not result:
             return await sent.edit_text(m.lang["play_not_found"].format(config.SUPPORT_CHAT))
@@ -59,6 +63,9 @@ async def play_hndlr(
         file.duration_sec = result.get("duration")
         file.duration = time.strftime("%M:%S", time.gmtime(file.duration_sec))
         file.view_count = result.get("views")
+
+    elif m3u8:
+        file = await tg.process_m3u8(url, sent.id, video)
 
     elif url:
         if "playlist" in url:
@@ -88,10 +95,6 @@ async def play_hndlr(
             return await sent.edit_text(
                 m.lang["play_not_found"].format(config.SUPPORT_CHAT)
             )
-
-    elif media:
-        setattr(sent, "lang", m.lang)
-        file = await tg.download(m.reply_to_message, sent)
 
     if not file:
         return await sent.edit_text(m.lang["play_usage"])
@@ -198,3 +201,32 @@ async def _playlist_cb(_, query: types.CallbackQuery):
                 chat_id=chat_id,
                 text=query.lang["playlist_queued"].format(len(tracks)) + added,
             )
+
+
+channels = {
+    "S Sport": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866987",
+    "S Sport plus": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866990",
+    "Ssport plus 2": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866991",
+    "Ssport plus 3": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866992",
+}
+cnames = list(channels.keys())
+clinks = list(channels.values())
+
+@app.on_message(filters.command(["tv"]) & filters.group & ~app.bl_users)
+async def _tv(_, m: types.Message):
+    keyb = buttons.tv_streams(channels)
+    await m.reply_text("Kanalı seçin ve oynatmaya başlamak için aşağıdaki düğmeye tıklayın:", reply_markup=keyb)
+
+
+@app.on_callback_query(filters.regex("tv"))
+@lang.language()
+async def _tv_cb(_, cq: types.CallbackQuery):
+    await cq.answer(cq.lang["processing"], show_alert=True)
+    data = cq.data.split()
+    name = cnames[int(data[1])]
+    link = clinks[int(data[1])]
+    await cq.edit_message_text(cq.lang["processing"])
+    file = await tg.process_m3u8(link, cq.message.id, video=True, title=name)
+    file.user = cq.from_user.mention
+    queue.force_add(cq.message.chat.id, file)
+    await anon.play_media(chat_id=cq.message.chat.id, message=cq.message, media=file)

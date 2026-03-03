@@ -172,6 +172,17 @@ class Inline:
                 ]
             )
         return self.ikm(rows)
+
+    def tv_streams(self, channels: dict) -> types.InlineKeyboardMarkup:
+        buttons = [
+            self.ikb(
+                text=name,
+                callback_data=f"tv {i}",
+            ) for i, name in enumerate(channels.keys())
+        ]
+        rows = [buttons[i : i + 2] for i in range(0, len(buttons), 2)]
+        return self.ikm(rows)
+
     def yt_key(self, link: str) -> types.InlineKeyboardMarkup:
         return self.ikm(
             [
