@@ -3,6 +3,7 @@
 # This file is part of AnonXMusic
 
 import time
+import asyncio
 from pathlib import Path
 from random import shuffle
 
@@ -219,14 +220,16 @@ async def _tv(_, m: types.Message):
 
 
 @app.on_callback_query(filters.regex("tv"))
-@lang.language()
 async def _tv_cb(_, cq: types.CallbackQuery):
-    await cq.answer(cq.lang["processing"], show_alert=True)
+    await cq.answer("İşleniyor...", show_alert=True)
     data = cq.data.split()
     name = cnames[int(data[1])]
     link = clinks[int(data[1])]
-    await cq.edit_message_text(cq.lang["processing"])
+    await cq.edit_message_text("İşleniyor...")
     file = await tg.process_m3u8(link, cq.message.id, video=True, title=name)
     file.user = cq.from_user.mention
     queue.force_add(cq.message.chat.id, file)
-    await anon.play_media(chat_id=cq.message.chat.id, message=cq.message, media=file)
+    try:
+        await anon.play_media(chat_id=cq.message.chat.id, message=cq.message, media=file)
+    except asyncio.TimeoutError:
+        return await cq.edit_message_text("Dosyada ses kaynağı bulunamadı.")
