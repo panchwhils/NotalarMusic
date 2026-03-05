@@ -3,7 +3,7 @@
 # This file is part of AnonXMusic
 
 
-from pyrogram import types
+from pyrogram import enums, types
 
 from anony import app, config, lang
 from anony.core.lang import lang_codes
@@ -15,7 +15,11 @@ class Inline:
         self.ikb = types.InlineKeyboardButton
 
     def cancel_dl(self, text) -> types.InlineKeyboardMarkup:
-        return self.ikm([[self.ikb(text=text, callback_data=f"cancel_dl")]])
+        return self.ikm([[self.ikb(
+            text=text,
+            callback_data=f"cancel_dl",
+            style=enums.ButtonStyle.DANGER,
+        )]])
 
     def controls(
         self,
@@ -27,11 +31,19 @@ class Inline:
         keyboard = []
         if status:
             keyboard.append(
-                [self.ikb(text=status, callback_data=f"controls status {chat_id}")]
+                [self.ikb(
+                    text=status,
+                    callback_data=f"controls status {chat_id}",
+                    style=enums.ButtonStyle.DANGER,
+                )]
             )
         elif timer:
             keyboard.append(
-                [self.ikb(text=timer, callback_data=f"controls status {chat_id}")]
+                [self.ikb(
+                    text=timer,
+                    callback_data=f"controls status {chat_id}",
+                    style=enums.ButtonStyle.PRIMARY,
+                )]
             )
 
         if not remove:
@@ -52,8 +64,16 @@ class Inline:
         if back:
             rows = [
                 [
-                    self.ikb(text=_lang["back"], callback_data="help back"),
-                    self.ikb(text=_lang["close"], callback_data="help close"),
+                    self.ikb(
+                        text=_lang["back"],
+                        callback_data="help back",
+                        style=enums.ButtonStyle.PRIMARY,
+                    ),
+                    self.ikb(
+                        text=_lang["close"],
+                        callback_data="help close",
+                        style=enums.ButtonStyle.DANGER,
+                    ),
                 ]
             ]
         else:
@@ -89,7 +109,9 @@ class Inline:
             [
                 [
                     self.ikb(
-                        text=_text, callback_data=f"controls force {chat_id} {item_id}"
+                        text=_text,
+                        callback_data=f"controls force {chat_id} {item_id}",
+                        style=enums.ButtonStyle.PRIMARY,
                     )
                 ]
             ]
@@ -153,12 +175,16 @@ class Inline:
                 self.ikb(
                     text=lang["add_me"],
                     url=f"https://t.me/{app.username}?startgroup=true",
+                    style=enums.ButtonStyle.DANGER,
+                    icon_custom_emoji_id=5274008024585871702,
                 )
             ],
-            [self.ikb(text=lang["help"], callback_data="help")],
+            [self.ikb(text=lang["help"], callback_data="help", icon_custom_emoji_id=5238025132177369293)],
             [
-                self.ikb(text=lang["support"], url=config.SUPPORT_CHAT),
-                self.ikb(text=lang["channel"], url=config.SUPPORT_CHANNEL),
+                self.ikb(text=lang["support"], url=config.SUPPORT_CHAT,
+                         style=enums.ButtonStyle.PRIMARY, icon_custom_emoji_id=5800812959173187710),
+                self.ikb(text=lang["channel"], url=config.SUPPORT_CHANNEL,
+                         style=enums.ButtonStyle.PRIMARY, icon_custom_emoji_id=5271617037767033640),
             ],
         ]
 
@@ -168,6 +194,7 @@ class Inline:
                     self.ikb(
                         text=lang["language"],
                         callback_data="language",
+                        style=enums.ButtonStyle.SUCCESS,
                     )
                 ]
             )

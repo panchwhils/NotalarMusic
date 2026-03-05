@@ -114,7 +114,7 @@
   "queue_fetching": "Kuyruk alınıyor...",
   "restarting": "Yeniden başlatılıyor...",
   "restarted": "Yeniden başlatma devam ediyor. Merak etme, sadece birkaç saniye sürecek… belki.",
-  "start_pm": "Merhaba {0},\nBu {1}!\n\nBazı harika ve kullanışlı özelliklere sahip bir müzik çalar botu.\n\n<b><i>Daha fazla bilgi için yardım butonuna tıkla.</i></b>",
+  "start_pm": "Merhaba {0},\nBu {1} <emoji id=5217933090483098080>🎵</emoji>\n\nBazı harika ve kullanışlı özelliklere sahip bir müzik çalar botu.\n\n<b><i>Daha fazla bilgi için yardım butonuna tıkla.</i></b>",
   "start_gp": "Merhaba,\nBu {0}\n\n<u><b>Bazı harika ve kullanışlı özelliklere sahip bir müzik çalar botu.</b></u>",
   "start_settings": "<u><b>{0} ayarları</b></u>\n\nBu sohbetin mevcut ayarlarını değiştirmek için aşağıdaki butonlara tıkla.",
   "stats_fetching": "İstatistikler alınıyor...",
