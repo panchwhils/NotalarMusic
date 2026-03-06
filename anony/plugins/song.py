@@ -4,11 +4,11 @@ from anony import app, config, lang, yt
 from anony.helpers import thumb
 
 
-@app.on_message(filters.command(["song"]) & ~app.bl_users)
+@app.on_message(filters.command(["indir"]) & ~app.bl_users)
 @lang.language()
 async def _song(_, m: types.Message):
     if len(m.command) < 2:
-        return await m.reply_text(m.lang["play_usage"].replace("play", "song"))
+        return await m.reply_text(m.lang["play_usage"].replace("play", "indir"))
 
     name = m.text.split(None, 1)[1]
     sent = await m.reply_text(m.lang["play_searching"])

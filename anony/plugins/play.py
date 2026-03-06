@@ -205,10 +205,21 @@ async def _playlist_cb(_, query: types.CallbackQuery):
 
 
 channels = {
-    "S Sport": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866987",
-    "S Sport plus": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866990",
-    "Ssport plus 2": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866991",
-    "Ssport plus 3": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866992",
+    "Bein 1": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/873521",
+    "Bein 2": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/181791",
+    "Bein 3": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/181792",
+    "Bein 4": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/181793",
+    "Bein 5": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/181794",
+    "S Sport 1": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866987",
+    "S Sport 2": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866998",
+    "S Sport Plus": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866990",
+    "S Sport Plus 2": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866991",
+    "S Sport Plus 3": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866992",
+    "Tivibu Spor": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/865740",
+    "Tivibu Spor 2": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/865741",
+    "Tivibu Spor 3": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/865743",
+    "Tivibu Spor 4": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/865744",
+    "Tabii Spor": "http://tr3.153689.xyz:80/AnsUcxM9zY/JSZnByRJrm/866495"
 }
 cnames = list(channels.keys())
 clinks = list(channels.values())
@@ -216,7 +227,7 @@ clinks = list(channels.values())
 @app.on_message(filters.command(["tv"]) & filters.group & ~app.bl_users)
 async def _tv(_, m: types.Message):
     keyb = buttons.tv_streams(channels)
-    await m.reply_text("Kanalı seçin ve oynatmaya başlamak için aşağıdaki düğmeye tıklayın:", reply_markup=keyb)
+    await m.reply_text("Kanalı seçin ve oynatmaya başlamak için aşağıdaki butona tıklayın:", reply_markup=keyb)
 
 
 @app.on_callback_query(filters.regex("tv"))
