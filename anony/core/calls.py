@@ -63,6 +63,12 @@ class TgCall(PyTgCalls):
             await message.edit_text(_lang["error_no_file"].format(config.SUPPORT_CHAT))
             return await self.play_next(chat_id)
 
+        ff_para = None
+        if seek_time > 1:
+            ff_para = f"-ss {seek_time}"
+        elif tv:
+            ff_para = "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 2"
+
         stream = types.MediaStream(
             media_path=media.file_path,
             audio_parameters=types.AudioQuality.HIGH,
@@ -73,7 +79,7 @@ class TgCall(PyTgCalls):
                 if media.video
                 else types.MediaStream.Flags.IGNORE
             ),
-            ffmpeg_parameters=f"-ss {seek_time}" if seek_time > 1 else None,
+            ffmpeg_parameters=ff_para,
         )
         try:
             await client.play(
@@ -91,24 +97,21 @@ class TgCall(PyTgCalls):
                     media.user,
                 )
                 keyboard = buttons.controls(chat_id)
-                if not tv:
-                    try:
-                        await message.edit_media(
-                            media=InputMediaPhoto(
-                                media=_thumb,
-                                caption=text,
-                            ),
-                            reply_markup=keyboard,
-                        )
-                    except MessageIdInvalid:
-                        media.message_id = (await app.send_photo(
-                            chat_id=chat_id,
-                            photo=_thumb,
+                try:
+                    await message.edit_media(
+                        media=InputMediaPhoto(
+                            media=_thumb,
                             caption=text,
-                            reply_markup=keyboard,
-                        )).id
-                else:
-                    await message.edit_text("Started streaming channel: {}")
+                        ),
+                        reply_markup=keyboard,
+                    )
+                except MessageIdInvalid:
+                    media.message_id = (await app.send_photo(
+                        chat_id=chat_id,
+                        photo=_thumb,
+                        caption=text,
+                        reply_markup=keyboard,
+                    )).id
         except FileNotFoundError:
             await message.edit_text(_lang["error_no_file"].format(config.SUPPORT_CHAT))
             await self.play_next(chat_id)
