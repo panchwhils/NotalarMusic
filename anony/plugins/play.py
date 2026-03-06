@@ -241,6 +241,6 @@ async def _tv_cb(_, cq: types.CallbackQuery):
     file.user = cq.from_user.mention
     queue.force_add(cq.message.chat.id, file)
     try:
-        await anon.play_media(chat_id=cq.message.chat.id, message=cq.message, media=file)
+        await anon.play_media(chat_id=cq.message.chat.id, message=cq.message, media=file, tv=True)
     except asyncio.TimeoutError:
         return await cq.edit_message_text("Dosyada ses kaynağı bulunamadı.")
