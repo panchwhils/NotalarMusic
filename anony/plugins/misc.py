@@ -3,13 +3,13 @@
 # This file is part of AnonXMusic
 
 
-import asyncio
 import time
+import asyncio
 
 from pyrogram import enums, errors, filters, types
 
 from anony import anon, app, config, db, lang, queue, tasks, userbot, yt
-from anony.helpers import buttons, Track
+from anony.helpers import buttons
 
 
 @app.on_message(filters.video_chat_started, group=19)
@@ -22,24 +22,21 @@ async def auto_leave():
     while True:
         await asyncio.sleep(1800)
         for ub in userbot.clients:
-            left = 0
             try:
-                for dialog in await ub.get_dialogs():
-                    chat_id = dialog.chat.id
-                    if left >= 20:
-                        break
-                    if chat_id in [app.logger, -1001686672798, -1001549206010]:
+                chats = [dialog.chat.id async for dialog in ub.get_dialogs()
+                            if dialog.chat.type in [
+                                enums.ChatType.GROUP, enums.ChatType.SUPERGROUP,
+                            ]][-20:]
+                for chat in chats:
+                    if chat in [app.logger, -1001686672798, -1001549206010]:
                         continue
-                    if dialog.chat.type in [
-                        enums.ChatType.GROUP,
-                        enums.ChatType.SUPERGROUP,
-                    ]:
-                        if chat_id in db.active_calls:
-                            continue
-                        await ub.leave_chat(chat_id)
-                        left += 1
+                    if chat in db.active_calls:
+                        continue
+                    await ub.leave_chat(chat)
                     await asyncio.sleep(5)
-            except:
+            except asyncio.CancelledError:
+                raise
+            except Exception:
                 continue
 
 
@@ -87,18 +84,24 @@ async def update_timer(length=10):
                     message_id=message_id,
                     reply_markup=buttons.controls(chat_id=chat_id, timer=timer, remove=remove),
                 )
+            except asyncio.CancelledError:
+                raise
             except Exception:
                 pass
 
 
-async def vc_watcher(sleep=15):
+async def vc_watcher(sleep=15, check=30):
     while True:
         await asyncio.sleep(sleep)
         for chat_id in list(db.active_calls):
             client = await db.get_assistant(chat_id)
             media = queue.get_current(chat_id)
             participants = await client.get_participants(chat_id)
-            if len(participants) < 2 and media.time > 30:
+            if not media or not participants:
+                continue
+            if not media.duration_sec:
+                check = 300
+            if len(participants) < 2 and media.time > check:
                 _lang = await lang.get_lang(chat_id)
                 try:
                     sent = await app.edit_message_reply_markup(

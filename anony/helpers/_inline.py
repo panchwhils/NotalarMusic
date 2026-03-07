@@ -13,6 +13,7 @@ class Inline:
     def __init__(self):
         self.ikm = types.InlineKeyboardMarkup
         self.ikb = types.InlineKeyboardButton
+        self.prim = enums.ButtonStyle.PRIMARY
 
     def cancel_dl(self, text) -> types.InlineKeyboardMarkup:
         return self.ikm([[self.ikb(
@@ -42,18 +43,18 @@ class Inline:
                 [self.ikb(
                     text=timer,
                     callback_data=f"controls status {chat_id}",
-                    style=enums.ButtonStyle.PRIMARY,
+                    style=self.prim,
                 )]
             )
 
         if not remove:
             keyboard.append(
                 [
-                    self.ikb(text="▷", callback_data=f"controls resume {chat_id}"),
-                    self.ikb(text="II", callback_data=f"controls pause {chat_id}"),
-                    self.ikb(text="⥁", callback_data=f"controls replay {chat_id}"),
-                    self.ikb(text="‣‣I", callback_data=f"controls skip {chat_id}"),
-                    self.ikb(text="▢", callback_data=f"controls stop {chat_id}"),
+                    self.ikb(text="▷", callback_data=f"controls resume {chat_id}", style=self.prim),
+                    self.ikb(text="II", callback_data=f"controls pause {chat_id}", style=self.prim),
+                    self.ikb(text="⥁", callback_data=f"controls replay {chat_id}", style=self.prim),
+                    self.ikb(text="‣‣I", callback_data=f"controls skip {chat_id}", style=self.prim),
+                    self.ikb(text="▢", callback_data=f"controls stop {chat_id}", style=self.prim),
                 ]
             )
         return self.ikm(keyboard)
@@ -67,7 +68,7 @@ class Inline:
                     self.ikb(
                         text=_lang["back"],
                         callback_data="help back",
-                        style=enums.ButtonStyle.PRIMARY,
+                        style=self.prim,
                     ),
                     self.ikb(
                         text=_lang["close"],
@@ -111,7 +112,7 @@ class Inline:
                     self.ikb(
                         text=_text,
                         callback_data=f"controls force {chat_id} {item_id}",
-                        style=enums.ButtonStyle.PRIMARY,
+                        style=self.prim,
                     )
                 ]
             ]
@@ -182,9 +183,9 @@ class Inline:
             [self.ikb(text=lang["help"], callback_data="help", icon_custom_emoji_id=5238025132177369293)],
             [
                 self.ikb(text=lang["support"], url=config.SUPPORT_CHAT,
-                         style=enums.ButtonStyle.PRIMARY, icon_custom_emoji_id=5800812959173187710),
+                         style=self.prim, icon_custom_emoji_id=5800812959173187710),
                 self.ikb(text=lang["channel"], url=config.SUPPORT_CHANNEL,
-                         style=enums.ButtonStyle.PRIMARY, icon_custom_emoji_id=5271617037767033640),
+                         style=self.prim, icon_custom_emoji_id=5271617037767033640),
             ],
         ]
 
