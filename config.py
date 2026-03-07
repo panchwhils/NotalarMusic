@@ -28,8 +28,8 @@ class Config:
         self.API_KEY = getenv("API_KEY", None) # @fallenapibetabot
         self.API_URL = getenv("API_URL", "https://beta.fallenapi.fun")
 
-        self.AUTO_END: bool = getenv("AUTO_END", False)
-        self.AUTO_LEAVE: bool = getenv("AUTO_LEAVE", False)
+        self.AUTO_END: bool = getenv("AUTO_END", True)
+        self.AUTO_LEAVE: bool = getenv("AUTO_LEAVE")
         self.VIDEO_PLAY: bool = getenv("VIDEO_PLAY", True)
         self.COOKIES_URL = [
             url for url in getenv("COOKIES_URL", "").split(" ")

@@ -100,6 +100,8 @@ async def vc_watcher(sleep=15, check=30):
             if not media or not participants:
                 continue
             if not media.duration_sec:
+                if len(participants) > 2:
+                    media.time = 1
                 check = 300
             if len(participants) < 2 and media.time > check:
                 _lang = await lang.get_lang(chat_id)
