@@ -232,11 +232,11 @@ async def _tv(_, m: types.Message):
 
 @app.on_callback_query(filters.regex("tv"))
 async def _tv_cb(_, cq: types.CallbackQuery):
-    await cq.answer("İşleniyor...", show_alert=True)
+    await cq.answer("Yayın Başlıyor🎵...", show_alert=True)
     data = cq.data.split()
     name = cnames[int(data[1])]
     link = clinks[int(data[1])]
-    await cq.edit_message_text("İşleniyor...")
+    await cq.edit_message_text("Yayın Başlıyor🎵...")
     file = await tg.process_m3u8(link, cq.message.id, video=True, title=name)
     file.user = cq.from_user.mention
     queue.force_add(cq.message.chat.id, file)

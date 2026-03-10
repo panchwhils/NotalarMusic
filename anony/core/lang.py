@@ -1,8 +1,3 @@
-# Copyright (c) 2025 AnonymousX1025
-# Licensed under the MIT License.
-# This file is part of AnonXMusic
-
-
 import json
 from functools import wraps
 from pathlib import Path
@@ -14,6 +9,7 @@ from anony import db, logger
 lang_codes = {
     "ar": "Arabic",
     "de": "German",
+    "en": "English",
     "tr": "turkish",
     "es": "Spanish",
     "fr": "French",
