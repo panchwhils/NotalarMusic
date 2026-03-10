@@ -7,7 +7,7 @@
   "auth_added": "{0} yetkili kullanıcılar listesine eklendi.",
   "auth_removed": "{0} yetkili kullanıcılar listesinden kaldırıldı.",
   "auth_is_admin": "Kullanıcı zaten bir <b>yönetici</b> ve yetkili kullanıcılara eklenemez.",
-  "auto_left": "> » ꜱᴇꜱʟɪ ꜱᴏʜʙᴇᴛᴛᴇ 10 ᴅᴀᴋɪᴋᴀ ʙᴏʏᴜɴᴄᴀ ᴋɪᴍꜱᴇ ʙᴜʟᴜɴᴍᴀᴅɪɢɪ ɪᴄɪɴ ʟɪꜱᴛᴇ ᴛᴇᴍɪᴢʟᴇɴᴅɪ ᴠᴇ ʏᴀʏɪɴ ꜱᴏɴʟᴀɴᴅɪ.",
+  "auto_left": "<blockquote>» ꜱᴇꜱʟɪ ꜱᴏʜʙᴇᴛᴛᴇ 10 ᴅᴀᴋɪᴋᴀ ʙᴏʏᴜɴᴄᴀ ᴋɪᴍꜱᴇ ʙᴜʟᴜɴᴍᴀᴅɪɢɪ ɪᴄɪɴ ʟɪꜱᴛᴇ ᴛᴇᴍɪᴢʟᴇɴᴅɪ ᴠᴇ ʏᴀʏɪɴ ꜱᴏɴʟᴀɴᴅɪ.</blockquote>",
   "bl_usage": "<b>Kullanım:</b>\n\n/{0} [chat_id|user_id]",
   "bl_invalid": "Yalnızca sohbet ID’leri ve kullanıcı ID’leri desteklenir.",
   "bl_already": "Bu sohbet zaten kara listede.",
