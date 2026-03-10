@@ -90,7 +90,7 @@ async def update_timer(length=10):
                 pass
 
 
-async def vc_watcher(sleep=15, check=30):
+async def vc_watcher(sleep=15, check=3000):
     while True:
         await asyncio.sleep(sleep)
         for chat_id in list(db.active_calls):
@@ -102,7 +102,7 @@ async def vc_watcher(sleep=15, check=30):
             if not media.duration_sec:
                 if len(participants) > 2:
                     media.time = 1
-                check = 300
+                check = 600
             if len(participants) < 2 and media.time > check:
                 _lang = await lang.get_lang(chat_id)
                 try:
